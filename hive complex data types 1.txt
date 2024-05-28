@@ -1,0 +1,44 @@
+CREATE TABLE complexdemo
+(c1 array<string>,
+c2 map<int,string>,
+c3 struct<name:string,score:double,subjects:int>
+)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
+COLLECTION ITEMS TERMINATED BY '/'
+MAP KEYS TERMINATED BY ':'
+LINES TERMINATED BY '\n';
+
+     The content of the file which we will use for loading data in the above table is as follows :
+ 
+
+Apple/Grapes/Orange/Banana/Cherry,4306:Sneha/4307:Renu/4308:Nagaraju/4309:Kamal,Sneha/90.99/6
+
+
+ Loading data in table
+ hive> load data local inpath '/home/snehalata/ComplexDemoData' into table complexdemo;
+Copying data from file:/home/snehalata/ComplexDemoData
+Copying file: file:/home/snehalata/ComplexDemoData
+Loading data to table default.complexdemo
+OK
+Time taken: 0.514 seconds
+ hive> select * from complexdemo;
+OK
+["Apple","Grapes","Orange"]     {4306:”Sneha”,4307:”Renu”}    {“name”:”Sneha”,”score”:90}
+Time taken: 0.212 seconds
+ Accessing the data in complex data type
+ hive> select c1[2],c2[4306],c3.name,c3.score from complexdemo;
+Total MapReduce jobs = 1
+Launching Job 1 out of 1
+Number of reduce tasks is set to 0 since there’s no reduce operator
+WARNING: org.apache.hadoop.metrics.jvm.EventCounter is deprecated. Please use org.apache.hadoop.log.metrics.EventCounter in all the log4j.properties files.
+Execution log at: /tmp/snehalata/snehalata_20130207144444_8399716d-9bcb-4f27-81da-1845d36d0ed4.log
+Job running in-process (local Hadoop)
+Hadoop job information for null: number of mappers: 0; number of reducers: 0
+2013-02-07 14:44:53,445 null map = 100%,  reduce = 0%
+Ended Job = job_local_0001
+Execution completed successfully
+Mapred Local Task Succeeded . Convert the Join into MapJoin
+OK
+Apple   Sneha    Sneha     90
+Time taken: 12.152 seconds
+ 
